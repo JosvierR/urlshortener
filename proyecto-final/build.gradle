@@ -2,9 +2,10 @@ plugins {
     id 'java'
     id 'com.google.protobuf' version '0.9.4'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-group = 'tu.grupo.id'
+group = 'edu.pucmm'
 version = '1.0-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -52,6 +53,24 @@ protobuf {
 }
 
 application {
-    // Indica la clase principal existente para tu servidor REST.
+    // Indica la clase principal de tu servidor REST (con Javalin).
     mainClass = 'edu.pucmm.Main'
+}
+
+shadowJar{
+    archiveBaseName.set("app")
+    archiveClassifier.set('')
+    archiveVersion.set('')
+}
+/**
+ * tarea necesaria para heroku si optamos por la tarea de Shadowjar
+ * en el archivo Procfile debe estar el siguiente comando:
+ * web: java -jar build/libs/app.jar
+ */
+task stage {
+    dependsOn shadowJar
+}
+
+test {
+    useJUnitPlatform()
 }
