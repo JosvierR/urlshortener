@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cliente REST - URL Shortener</title>
+</head>
+<body>
+<h1>Cliente REST - URL Shortener</h1>
+
+<!-- Formulario para crear URL acortada -->
+<h2>Crear URL Acortada</h2>
+<form id="createUrlForm">
+    <input type="text" id="username" placeholder="Usuario" required>
+    <input type="text" id="originalUrl" placeholder="URL Original" required>
+    <button type="submit">Acortar URL</button>
+</form>
+<div id="createUrlResult"></div>
+
+<!-- Formulario para listar las URLs de un usuario -->
+<h2>Listar URLs del Usuario</h2>
+<form id="listUrlsForm">
+    <input type="text" id="listUsername" placeholder="Usuario" required>
+    <button type="submit">Listar URLs</button>
+</form>
+<div id="listUrlsResult"></div>
+
+<script>
+    // Al enviar el formulario para crear una URL acortada
+    document.getElementById("createUrlForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const username = document.getElementById("username").value.trim();
+        const originalUrl = document.getElementById("originalUrl").value.trim();
+        const resultDiv = document.getElementById("createUrlResult");
+
+        try {
+            const response = await fetch('http://localhost:7070/api/extended/urls', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    // Se asume que si es necesario, se ha almacenado el token JWT en localStorage
+                    'Authorization': localStorage.getItem("jwtToken") ? "Bearer " + localStorage.getItem("jwtToken") : ""
+                },
+                body: new URLSearchParams({
+                    username: username,
+                    url: originalUrl
+                })
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                resultDiv.innerText = "Error: " + errorText;
+                return;
+            }
+            const data = await response.json();
+            resultDiv.innerHTML = `
+          <p><strong>URL Completa:</strong> ${data.fullUrl}</p>
+          <p><strong>URL Acortada:</strong> ${data.shortUrl}</p>
+          <p><strong>Fecha de Creación:</strong> ${new Date(data.creationDate).toLocaleString()}</p>
+          <p><strong>Accesos:</strong> ${data.statistics.accessCount}</p>
+          <p><strong>Vista Previa:</strong></p>
+          <img src="${data.previewImageBase64}" alt="Vista previa">
+        `;
+        } catch (error) {
+            resultDiv.innerText = "Error: " + error;
+        }
+    });
+
+    // Al enviar el formulario para listar las URLs de un usuario
+    document.getElementById("listUrlsForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        const username = document.getElementById("listUsername").value.trim();
+        const resultDiv = document.getElementById("listUrlsResult");
+
+        try {
+            const response = await fetch(`http://localhost:7070/api/extended/urls/${username}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': localStorage.getItem("jwtToken") ? "Bearer " + localStorage.getItem("jwtToken") : ""
+                }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                resultDiv.innerText = "Error: " + errorText;
+                return;
+            }
+            const data = await response.json();
+            // Mostrar el listado de URLs en una lista HTML
+            let html = "<ul>";
+            data.forEach(urlObj => {
+                html += `<li>
+            <p><strong>URL:</strong> ${urlObj.originalUrl}</p>
+            <p><strong>Código:</strong> ${urlObj.shortCode}</p>
+            <p><strong>Accesos:</strong> ${urlObj.accessCount}</p>
+            <p><strong>Fecha:</strong> ${new Date(urlObj.creationDate).toLocaleString()}</p>
+          </li>`;
+            });
+            html += "</ul>";
+            resultDiv.innerHTML = html;
+        } catch (error) {
+            resultDiv.innerText = "Error: " + error;
+        }
+    });
+</script>
+</body>
+</html>
