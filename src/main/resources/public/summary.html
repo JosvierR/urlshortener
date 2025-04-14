@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard - Resumen del Enlace</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+</head>
+
+<body>
+<div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">Fresh URL</div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-button"><i class="fa-solid fa-house"></i> Inicio</a>
+            <a href="#" class="sidebar-button" id="logoutBtn"><i class="fa-solid fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </nav>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="dashboard-title">📊 Resumen del Enlace</div>
+        </header>
+
+        <section class="dashboard-container">
+            <!-- Tarjeta: Detalles -->
+            <div class="dashboard-card">
+                <h2><ion-icon name="link-outline"></ion-icon> Detalles</h2>
+                <p><strong>URL Original:</strong> <span id="originalUrl"></span></p>
+                <p><strong>Código Corto:</strong> <span id="shortCode"></span></p>
+                <p><strong>Fecha de Creación:</strong> <span id="creationDate"></span></p>
+                <p><strong>Accesos:</strong> <span id="accessCount"></span></p>
+            </div>
+
+            <!-- Tarjeta: Código QR -->
+            <div class="dashboard-card">
+                <h2><ion-icon name="qr-code-outline"></ion-icon> Código QR</h2>
+                <div id="qrcode"></div>
+                <p><a id="directLink" href="#" target="_blank">Ver enlace</a></p>
+            </div>
+
+            <!-- Tarjeta: Historial -->
+            <div class="dashboard-card">
+                <h2><ion-icon name="document-text-outline"></ion-icon> Historial de Accesos</h2>
+                <table id="accessLogsTable">
+                    <thead>
+                    <tr>
+                        <th>Fecha/Hora</th>
+                        <th>Usuario</th>
+                        <th>IP</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <!-- Tarjeta: Gráficos -->
+            <div class="dashboard-card">
+                <h2><ion-icon name="stats-chart-outline"></ion-icon> Gráficos de Accesos</h2>
+                <canvas id="accessChart" width="400" height="200"></canvas>
+                <hr style="margin: 1.5rem 0; border-color: #374151;" />
+                <h3><ion-icon name="time-outline"></ion-icon> Accesos por Hora</h3>
+                <canvas id="hourlyChart" width="400" height="200"></canvas>
+            </div>
+        </section>
+
+        <!-- Gráfico grande -->
+        <section class="dashboard-chart">
+            <h2><ion-icon name="calendar-outline"></ion-icon> Línea de Tiempo de Accesos</h2>
+            <canvas id="timelineChart" width="800" height="400"></canvas>
+        </section>
+
+        <footer class="dashboard-footer">
+            <p>&copy; 2025 Fresh URL Shortener Dashboard</p>
+        </footer>
+    </main>
+</div>
+
+<!-- Scripts -->
+<script src="js/summary.js"></script>
+<script src="js/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
+<!-- Ionicons -->
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>
