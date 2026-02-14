@@ -6,8 +6,11 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import edu.pucmm.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private static MongoCollection<Document> userCollection = Main.database.getCollection("users");
 
     public static boolean registerUser(User user) {
@@ -34,7 +37,7 @@ public class UserService {
         if (admin == null) {
             User adminUser = new User("admin", "admin", "admin");
             registerUser(adminUser);
-            System.out.println("Default admin created -> username: admin, password: admin");
+            LOGGER.info("Default admin created -> username: admin");
         }
     }
 
