@@ -29,9 +29,10 @@ public class Main {
         UserService.createDefaultAdmin();
 
         // 3) Iniciar Javalin y servir archivos estáticos de /public
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "7070"));
         Javalin app = Javalin.create(config -> {
             config.staticFiles.add("/public");
-        }).start(7070);
+        }).start(port);
 
         // 4) Redirigir /summary/{shortCode} -> summary.html?code=...
         app.get("/summary/{shortCode}", ctx -> {
@@ -90,6 +91,6 @@ public class Main {
             ctx.json(userInfo);
         });
 
-        System.out.println("Javalin running on http://localhost:7070/");
+        System.out.println("Javalin running on http://localhost:" + port + "/");
     }
 }
