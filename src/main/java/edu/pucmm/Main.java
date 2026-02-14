@@ -29,7 +29,15 @@ public class Main {
         UserService.createDefaultAdmin();
 
         // 3) Iniciar Javalin y servir archivos estáticos de /public
-        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "7070"));
+        String portEnv = System.getenv("PORT");
+        int port = 7070;
+        if (portEnv != null && !portEnv.isBlank()) {
+            try {
+                port = Integer.parseInt(portEnv);
+            } catch (NumberFormatException e) {
+                System.err.println("WARNING: Invalid PORT value '" + portEnv + "'. Using default 7070.");
+            }
+        }
         Javalin app = Javalin.create(config -> {
             config.staticFiles.add("/public");
         }).start(port);
@@ -91,6 +99,6 @@ public class Main {
             ctx.json(userInfo);
         });
 
-        System.out.println("Javalin running on http://localhost:" + port + "/");
+        System.out.println("Javalin running on http://localhost:" + port + "/ (effective port: " + port + ")");
     }
 }
