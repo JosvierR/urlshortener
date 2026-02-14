@@ -10,9 +10,14 @@ RUN gradle --no-daemon shadowJar
 FROM eclipse-temurin:11-jre-jammy AS runtime
 WORKDIR /app
 
+ENV LOG_PATH=/var/log/urlshortener
+
 # Default exposed port for local development.
 # The effective listening port should be controlled via the PORT env variable at runtime.
 EXPOSE 7070
+
+RUN mkdir -p ${LOG_PATH}/archive
+VOLUME ["/var/log/urlshortener"]
 
 COPY --from=build /workspace/build/libs/app.jar /app/app.jar
 

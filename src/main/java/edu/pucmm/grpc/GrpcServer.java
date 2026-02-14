@@ -4,8 +4,11 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GrpcServer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GrpcServer.class);
     private Server server;
 
     private void start() throws IOException {
@@ -15,12 +18,12 @@ public class GrpcServer {
                 .build()
                 .start();
 
-        System.out.println("gRPC Server started, listening on " + port);
+        LOGGER.info("gRPC Server started, listening on {}", port);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.err.println("*** Shutting down gRPC server since JVM is shutting down");
+            LOGGER.info("Shutting down gRPC server since JVM is shutting down");
             GrpcServer.this.stop();
-            System.err.println("*** Server shut down");
+            LOGGER.info("gRPC server shut down");
         }));
     }
 

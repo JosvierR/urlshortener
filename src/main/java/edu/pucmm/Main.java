@@ -8,18 +8,21 @@ import edu.pucmm.services.JwtUtil;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Main {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     public static MongoDatabase database;
 
     public static void main(String[] args) {
         // 1) Conexión a MongoDB mediante variable de ambiente
         String mongoUrl = System.getenv("MONGODB_URL");
         if (mongoUrl == null || mongoUrl.isEmpty()) {
-            System.err.println("ERROR: MONGODB_URL is not set.");
+            LOGGER.error("MONGODB_URL is not set.");
             System.exit(1);
         }
         MongoClient mongoClient = MongoClients.create(mongoUrl);
@@ -35,12 +38,19 @@ public class Main {
             try {
                 port = Integer.parseInt(portEnv);
             } catch (NumberFormatException e) {
-                System.err.println("WARNING: Invalid PORT value '" + portEnv + "'. Using default 7070.");
+                LOGGER.warn("Invalid PORT value '{}'. Using default 7070.", portEnv);
             }
         }
         Javalin app = Javalin.create(config -> {
             config.staticFiles.add("/public");
         }).start(port);
+
+        app.before(ctx -> LOGGER.info("REQ {} {} from {}", ctx.method(), ctx.path(), ctx.ip()));
+        app.after(ctx -> LOGGER.info("RES {} {} -> {}", ctx.method(), ctx.path(), ctx.status()));
+        app.exception(Exception.class, (e, ctx) -> {
+            LOGGER.error("Unhandled error on {} {}", ctx.method(), ctx.path(), e);
+            ctx.status(500).result("Internal server error");
+        });
 
         // 4) Redirigir /summary/{shortCode} -> summary.html?code=...
         app.get("/summary/{shortCode}", ctx -> {
@@ -99,6 +109,6 @@ public class Main {
             ctx.json(userInfo);
         });
 
-        System.out.println("Javalin running on http://localhost:" + port + "/ (effective port: " + port + ")");
+        LOGGER.info("Javalin running on http://localhost:{}/ (effective port: {})", port, port);
     }
 }
